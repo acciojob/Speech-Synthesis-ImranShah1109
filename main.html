@@ -37,6 +37,57 @@
   const stopButton = document.querySelector('#stop');
 
   //Your code goes here
+  const texttoSpeech = document.querySelector('textarea');
+  speakButton.addEventListener('click', () =>{speakLoud(texttoSpeech.value)})
+
+
+  let synth = speechSynthesis,
+  isSpeaking = true;
+
+
+  // get the voices available in devices and add to option tag in select
+  function addvoices()
+  {
+      for(let voice of synth.getVoices())
+      {
+          // console.log(voice.name);
+          let option = `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`;
+          voicesDropdown.insertAdjacentHTML("beforeend", option);
+      }
+  }
+
+// voiceschanged is speechSynthesis event to change the voices
+  synth.addEventListener('voiceschanged',addvoices)
+    function speakLoud(text)
+    {
+      if(text !== "")
+      {
+          if(!synth.speaking){
+              let utterance = new SpeechSynthesisUtterance(text);
+              for(let voice of synth.getVoices())
+              {
+                  if(voice.name === voicesDropdown.value)
+                  {
+                      utterance.voice = voice;
+                  }
+              }
+              synth.speak(utterance);
+          }
+
+          if(isSpeaking)
+          {
+              synth.resume();
+              isSpeaking = false;
+          }
+      }
+    }
+
+  stopButton.addEventListener('click', () =>{
+    if(!isSpeaking){
+        synth.pause();
+        isSpeaking = true;
+    }
+  });
 </script>
 
 </body>
